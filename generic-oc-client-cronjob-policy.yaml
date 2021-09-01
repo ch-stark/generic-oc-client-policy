@@ -55,6 +55,7 @@ spec:
               kind: CronJob
               metadata:
                 name: basic-oc-client
+                namespace: jobnamespace 
                 labels:
                   purpose: basic-oc-client
               spec:
