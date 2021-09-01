@@ -36,7 +36,6 @@ spec:
               kind: ClusterRoleBinding
               metadata:
                 name: cluster-admin-occlient-sa-crb
-                namespace: default
               roleRef:
                 name: cluster-admin
                 apiGroup: rbac.authorization.k8s.io
@@ -44,6 +43,7 @@ spec:
               subjects:
                 - name: occlient
                   kind: ServiceAccount
+                  namespace: default
           - complianceType: musthave
             objectDefinition:
               apiVersion: batch/v1beta1
