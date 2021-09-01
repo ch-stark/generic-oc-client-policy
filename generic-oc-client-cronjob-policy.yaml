@@ -75,7 +75,6 @@ spec:
                               - |
                                 echo "Put your oc commands here"
                                 oc version  
-                                done
                         securityContext:
                           privileged: true
                         terminationMessagePath: /dev/termination-log
