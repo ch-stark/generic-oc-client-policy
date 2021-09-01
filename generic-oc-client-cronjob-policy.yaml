@@ -2,94 +2,96 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-occlient
+  namespace: default
   annotations:
-    policy.open-cluster-management.io/categories: NIST SP 800-53
-    policy.open-cluster-management.io/controls: CM Configuration Management 
     policy.open-cluster-management.io/standards: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/categories: NIST SP 800-53
+    policy.open-cluster-management.io/controls: CM Configuration Management
 spec:
+  remediationAction: inform
   disabled: false
   policy-templates:
-    - objectDefinition:
-        apiVersion: policy.open-cluster-management.io/v1
-        kind: ConfigurationPolicy
-        metadata:
-          name: policy-scaleup-example
-        spec:
-          namespaceSelector:
-            exclude:
-              - kube-*
-            include:
-              - default
-          object-templates:
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: v1
-                kind: ServiceAccount
-                metadata:
-                  name: occlient
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: rbac.authorization.k8s.io/v1
-                kind: ClusterRoleBinding
-                metadata:
-                  name: cluster-admin-occlient-sa-crb
-                roleRef:
-                  name: cluster-admin
-                  apiGroup: rbac.authorization.k8s.io
-                  kind: ClusterRole
-                subjects:
-                  - name: occlient
-                    kind: ServiceAccount
-            - complianceType: musthave
-              objectDefinition:
-                apiVersion: batch/v1beta1
-                kind: CronJob
-                metadata:
-                  name: scale-up-example
-                  labels:
-                    purpose: scale-up-example
-                spec:
-                  concurrencyPolicy: Forbid
-                  jobTemplate:
-                    spec:
-                      backoffLimit: 0
-                      template:
-                        spec:
-                          activeDeadlineSeconds: 200
-                          containers:
-			  - image: registry.redhat.io/openshift4/ose-cli:v4.4
-			    command:
-			    - /bin/bash
-			    --c
-			    - |
-			      echo "Put your oc commands here"
-                              oc version  
-			      done
-                          securityContext:
-                            privileged: true
-                          terminationMessagePath: /dev/termination-log
-                          terminationMessagePolicy: FallbackToLogsOnError
-                          nodeSelector:
-                            node-role.kubernetes.io/master: ''
-                          restartPolicy: Never
-                          serviceAccount: occlient
-                          serviceAccountName: occlient
-                          tolerations:
-                            - effect: NoSchedule
-                              operator: Exists
-                            - effect: NoExecute
-                              operator: Exists
-                  schedule: '0 */6 * * *'
-                  startingDeadlineSeconds: 200
-                  suspend: false
-          remediationAction: inform
-          severity: low
-  remediationAction: inform
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: policy-scaleup-example
+      spec:
+        namespaceSelector:
+          exclude:
+            - kube-*
+          include:
+            - default
+        object-templates:
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: v1
+              kind: ServiceAccount
+              metadata:
+                name: occlient
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: rbac.authorization.k8s.io/v1
+              kind: ClusterRoleBinding
+              metadata:
+                name: cluster-admin-occlient-sa-crb
+              roleRef:
+                name: cluster-admin
+                apiGroup: rbac.authorization.k8s.io
+                kind: ClusterRole
+              subjects:
+                - name: occlient
+                  kind: ServiceAccount
+          - complianceType: musthave
+            objectDefinition:
+              apiVersion: batch/v1beta1
+              kind: CronJob
+              metadata:
+                name: scale-up-example
+                labels:
+                  purpose: scale-up-example
+              spec:
+                concurrencyPolicy: Forbid
+                jobTemplate:
+                  spec:
+                    backoffLimit: 0
+                    template:
+                      spec:
+                        activeDeadlineSeconds: 200
+                        containers:
+                          - image: 'registry.redhat.io/openshift4/ose-cli:v4.4'
+                            command:
+                              - /bin/bash
+                              - c
+                              - |
+                                echo "Put your oc commands here"
+                                oc version  
+                                done
+                        securityContext:
+                          privileged: true
+                        terminationMessagePath: /dev/termination-log
+                        terminationMessagePolicy: FallbackToLogsOnError
+                        nodeSelector:
+                          node-role.kubernetes.io/master: ''
+                        restartPolicy: Never
+                        serviceAccount: occlient
+                        serviceAccountName: occlient
+                        tolerations:
+                          - effect: NoSchedule
+                            operator: Exists
+                          - effect: NoExecute
+                            operator: Exists
+                schedule: '* * * * *'
+                startingDeadlineSeconds: 200
+                suspend: false
+        remediationAction: inform
+        severity: low
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-policy-occlient
+  namespace: default
 placementRef:
   name: placement-policy-occlient
   kind: PlacementRule
@@ -103,6 +105,7 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-occlient
+  namespace: default
 spec:
   clusterConditions:
   - status: "True"
