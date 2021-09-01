@@ -25,11 +25,17 @@ spec:
         object-templates:
           - complianceType: musthave
             objectDefinition:
+              kind: Namespace # must have namespace 'jobnamespace'
+              apiVersion: v1
+              metadata:
+                name: jobnamespace     
+          - complianceType: musthave
+            objectDefinition:
               apiVersion: v1
               kind: ServiceAccount
               metadata:
                 name: occlient
-                namespace: default
+                namespace: jobnamespace 
           - complianceType: musthave
             objectDefinition:
               apiVersion: rbac.authorization.k8s.io/v1
@@ -43,15 +49,15 @@ spec:
               subjects:
                 - name: occlient
                   kind: ServiceAccount
-                  namespace: default
+                  namespace: jobnamespace 
           - complianceType: musthave
             objectDefinition:
               apiVersion: batch/v1beta1
               kind: CronJob
               metadata:
-                name: scale-up-example
+                name: basic-oc-client
                 labels:
-                  purpose: scale-up-example
+                  purpose: basic-oc-client
               spec:
                 concurrencyPolicy: Forbid
                 jobTemplate:
@@ -93,9 +99,8 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: binding-policy-occlient
-  namespace: default
-placementRef:
+  name: binding-polic
+  placementRef:
   name: placement-policy-occlient
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
@@ -108,7 +113,6 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-occlient
-  namespace: default
 spec:
   clusterConditions:
   - status: "True"
