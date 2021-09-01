@@ -2,7 +2,6 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-occlient
-  namespace: default
   annotations:
     policy.open-cluster-management.io/standards: CM-2 Baseline Configuration
     policy.open-cluster-management.io/categories: NIST SP 800-53
@@ -101,8 +100,8 @@ kind: PlacementBinding
 metadata:
   name: binding-polic
   placementRef:
-  name: placement-policy-occlient
-  kind: PlacementRule
+    name: placement-policy-occlient
+    kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
 - name: policy-occlient
