@@ -59,7 +59,8 @@ spec:
                       spec:
                         activeDeadlineSeconds: 200
                         containers:
-                          - image: 'registry.redhat.io/openshift4/ose-cli:v4.4'
+                          - name: occlient
+                            image: 'registry.redhat.io/openshift4/ose-cli:v4.4'
                             command:
                               - /bin/bash
                               - c
