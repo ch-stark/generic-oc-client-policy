@@ -14,7 +14,7 @@ spec:
       apiVersion: policy.open-cluster-management.io/v1
       kind: ConfigurationPolicy
       metadata:
-        name: policy-scaleup-example
+        name: policy-oc-client-example
       spec:
         namespaceSelector:
           exclude:
@@ -67,7 +67,7 @@ spec:
                         activeDeadlineSeconds: 200
                         containers:
                           - name: occlient
-                            image: 'registry.redhat.io/openshift4/ose-cli:v4.4'
+                            image: 'registry.redhat.io/openshift4/ose-cli:v4.8'
                             command:
                               - /bin/bash
                               - c
